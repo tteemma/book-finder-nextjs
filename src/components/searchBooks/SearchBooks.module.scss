@@ -1,0 +1,90 @@
+.search {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.searchBar {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+.label {
+	font-size: 1rem;
+	font-weight: 500;
+	color: #333;
+}
+
+.input {
+	padding: 0.75rem;
+	font-size: 1rem;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	outline: none;
+	transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+	&:focus {
+		border-color: #0070f3;
+		box-shadow: 0 0 8px rgba(0, 112, 243, 0.2);
+	}
+
+	&::placeholder {
+		color: #999;
+	}
+}
+
+.loading,
+.error,
+.empty {
+	font-size: 1rem;
+	text-align: center;
+}
+
+.loading {
+	color: #0070f3;
+	animation: pulse 1.5s infinite;
+}
+
+.error {
+	color: #d32f2f;
+}
+
+.empty {
+	color: #666;
+}
+
+.bookGrid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+	gap: 1.5rem;
+}
+
+@keyframes pulse {
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.5;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@media (max-width: 768px) {
+	.searchBar {
+		max-width: 100%;
+	}
+
+	.input {
+		padding: 0.5rem;
+	}
+
+	.bookGrid {
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		gap: 1rem;
+	}
+}
