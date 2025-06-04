@@ -1,28 +1,32 @@
 import { Book } from '@/types/type'
-
-export const fetchBooksInfo = async (): Promise<Book[]> => {
-	try {
-		const responseBook = await fetch(
-			'https://www.googleapis.com/books/v1/volumes?q=a'
-		)
-		if (!responseBook.ok) throw new Error('Ошибка при загрузке данных')
-		const books = await responseBook.json()
-		return books.items
-	} catch (err) {
-		console.log(err)
-		return []
-	}
-}
+import { apiRequest } from './apiRequest'
 
 export const fetchBookById = async (id: string): Promise<Book | null> => {
-	try {
-		const responseBook = await fetch(
-			`https://www.googleapis.com/books/v1/volumes/${id}`
-		)
-		if (!responseBook.ok) throw new Error('Ошибка при загрузке данных')
-		return responseBook.json()
-	} catch (err) {
-		console.log(err)
-		return null
+	const responseBook = await apiRequest(`/books/v1/volumes/${id}`)
+	return responseBook
+}
+
+export const fetchBooksRaw = async (
+	query: string
+): Promise<{ items: Book[] }> => {
+	const resp = await apiRequest(`books/v1/volumes?q=${query}`, {
+		next: {
+			revalidate: 300,
+		},
+	})
+
+	return resp
+}
+
+export const validateBooksData = (data: { items: Book[] }): Book[] => {
+	if (!data.items || !Array.isArray(data.items))
+		throw new Error('Данные API не содержат items или имеют неверный формат')
+	return data.items
+}
+export const mapBooksToParams = (data: Book[]): { id: string }[] => {
+	if (!data.length) {
+		console.warn('Нет данных для генерации страниц. Генерируем фолбэк.')
+		return [{ id: 'fallback-id' }]
 	}
+	return data.map((book: Book) => ({ id: book.id.toString() }))
 }

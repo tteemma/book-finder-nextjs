@@ -1,5 +1,9 @@
-import { fetchBookById } from '@/lib/api'
-import { Book } from '@/types/type'
+import {
+	fetchBookById,
+	fetchBooksRaw,
+	mapBooksToParams,
+	validateBooksData,
+} from '@/lib/api'
 import { Metadata } from 'next'
 import styles from './page.module.scss'
 import Link from 'next/link'
@@ -8,6 +12,7 @@ type BookPageProp = {
 	params: { id: string }
 }
 export const dynamic = 'force-static'
+export const dynamicParams = true
 
 export async function generateMetadata({
 	params,
@@ -28,16 +33,9 @@ export async function generateMetadata({
 
 export async function generateStaticParams(): Promise<{ id: string }[]> {
 	try {
-		const resp = await fetch('https://www.googleapis.com/books/v1/volumes?q=a')
-		if (!resp.ok) throw new Error('Ошибка при загрузке данных')
-		const data: { items: Book[] } = await resp.json()
-		if (!data.items || !Array.isArray(data.items))
-			throw new Error('Данные API не содержат items или имеют неверный формат')
-		if (!data.items?.length) {
-			console.warn('Нет данных для генерации страниц. Генерируем фолбэк.')
-			return [{ id: 'fallback-id' }]
-		}
-		return data.items.map((book: Book) => ({ id: book.id.toString() }))
+		const data = await fetchBooksRaw('Harry Potter')
+		const books = validateBooksData(data)
+		return mapBooksToParams(books)
 	} catch (err) {
 		console.error(err)
 		return []
