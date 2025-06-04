@@ -44,6 +44,7 @@ export async function generateStaticParams(): Promise<{ id: string }[]> {
 
 export default async function BookPage({ params }: BookPageProp) {
 	const bookInfo = await fetchBookById(params.id)
+
 	if (!bookInfo)
 		return <main className={styles.noData}>Нет данных для отображения :(</main>
 	return (

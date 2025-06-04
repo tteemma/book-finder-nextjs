@@ -32,3 +32,7 @@ export const GenreLabels: Record<Genre, string> = {
 	science: 'Наука',
 	romance: 'Романтика',
 }
+
+export interface Favorites {
+	favorites: Book[]
+}
